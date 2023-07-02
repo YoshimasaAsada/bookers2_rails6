@@ -10,6 +10,7 @@ class BooksController < ApplicationController
   def index
     @books = Book.all
     @book = Book.new
+    @boards = Book.order(created_at: :desc).limit(4)
   end
 
   def create
