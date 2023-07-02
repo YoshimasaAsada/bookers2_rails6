@@ -1,0 +1,9 @@
+<%= search_form_for q, url: search_books_path do |f| %>
+  <%= f.label :name_cont, 'タイトル' %>
+  <%= f.search_field :title_cont %>
+  <%= f.label :name_cont, '内容' %>
+  <%= f.search_field :body_cont %>
+  <%= f.label :name_cont, '投稿者' %>
+  <%= f.search_field :user_name_cont %>
+ <%= f.submit '検索' %>
+<% end %>

@@ -3,11 +3,13 @@ class BooksController < ApplicationController
   before_action :ensure_correct_user, only: [:edit, :update, :destroy]
 
   def show
+    @q = Book.ransack(params[:q])
     @book = Book.find(params[:id])
     @book_comment = BookComment.new
   end
 
   def index
+    @q = Book.ransack(params[:q])
     @books = Book.all
     @book = Book.new
   end
@@ -38,11 +40,20 @@ class BooksController < ApplicationController
     @book.destroy
     redirect_to books_path
   end
+  
+  def search
+    @q = Book.ransack(params[:q])
+    @searches = @q.result(distinct: true)
+  end
 
   private
 
   def book_params
     params.require(:book).permit(:title, :body)
+  end
+  
+  def search_params
+    params.require(:q).permit!
   end
 
   def ensure_correct_user
