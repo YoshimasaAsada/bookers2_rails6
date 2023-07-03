@@ -1,29 +1,47 @@
 <table class='table'>
-  <tr><%= image_tag user.get_profile_image(100,100) %></tr>
+  <tr><%= image_tag user.get_profile_image(100, 100) %></tr>
   <tr>
-	  <th>name</th>
-	  <td><%= user.name %></td>
+	  <th>名前</th>
+	  <th><%= user.name %></th>
   </tr>
   <tr>
-	  <th>introduction</th>
-	  <td><%= user.introduction %></td>
+	  <th>自己紹介文</th>
+	  <th><%= user.introduction %></th>
+  </tr>
+  <% if user == current_user %>
+    <tr>
+	    <th>メールアドレス</th>
+	    <th><%= user.email %></th>
+    </tr>
+    <tr>
+	    <th>郵便番号</th>
+	    <th><%= user.postcode %></th>
+    </tr>
+    <tr>
+      <th>住所</th>
+      <th><%= user.join_address %></th>
+    </tr>
+  <% end %>
+  <tr>
+    <th>フォロー</th>
+    <th><%= link_to user.followings.count, user_followings_path(user) %></th>
   </tr>
   <tr>
-    <th>follows</th>
-    <td><%= link_to user.followings.count, user_followings_path(user) %></td>
-  </tr>
-  <tr>
-    <th>followers</th>
-    <td><%= link_to user.followers.count, user_followers_path(user) %></td>
+    <th>フォロワー</th>
+    <th><%= link_to user.followers.count, user_followers_path(user) %></th>
   </tr>
 </table>
-　
+
 <div class='row'>
   <% if user != current_user %>
-    <%= render "relationships/btn", user: user %>
-  <% else %>
-    <%= link_to edit_user_path(user), class: "btn btn-outline-secondary btn-block edit_user_#{user.id}" do %>
-      <i class="fas fa-user-cog"></i>
+    <% if current_user.following?(user) %>
+      <%= link_to "フォロー外す", user_relationships_path(user.id), class: "btn btn-sm btn-info", method: :delete %>
+    <% else %>
+      <%= link_to "フォローする", user_relationships_path(user.id), class: "btn btn-sm btn-success", method: :post %>
     <% end %>
   <% end %>
+  <%= link_to edit_user_path(user), class: "btn btn-outline-secondary btn-block edit_user_#{user.id}" do %>
+    <i class="fas fa-user-cog"></i>
+  <% end %>
+
 </div>

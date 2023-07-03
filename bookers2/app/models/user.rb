@@ -13,6 +13,9 @@ class User < ApplicationRecord
 
   has_many :followings, :through => :relationships, :source => :followed
   has_many :followers, :through => :reverse_of_relationships, :source => :follower
+  
+  include JpPrefecture
+  jp_prefecture :prefecture_code
 
   has_one_attached :profile_image
 
@@ -38,4 +41,17 @@ class User < ApplicationRecord
     end
     self.profile_image.variant(resize_to_fill: [weight,height]).processed
   end
+  
+  def prefecture_name
+    JpPrefecture::Prefecture.find(code: prefecture_code).try(:name)
+  end
+  
+  def prefecture_name=(prefecture_name)
+    self.prefecture_code = JpPrefecture::Prefecture.find(name: prefecture_name).code
+  end
+  def join_address
+    "#{self.prefecture_name}#{self.address_city}#{self.address_street}#{self.address_building}"
+  end
+  geocoded_by :address_city
+  after_validation :geocode, if: :address_city_changed?
 end
